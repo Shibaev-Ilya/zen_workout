@@ -1,0 +1,94 @@
+'use client';
+
+import { Button } from '@/components/ui/button';
+import type { CompletedTraining } from '@/lib/types';
+import styles from './day-detail-modal.module.scss';
+
+interface DayDetailModalProps {
+  dateLabel: string;
+  trainings: CompletedTraining[];
+  onClose: () => void;
+  onDelete: (id: string) => void;
+}
+
+function formatDuration(seconds: number): string {
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = seconds % 60;
+  const parts: string[] = [];
+  if (h > 0) parts.push(`${h}ч`);
+  if (m > 0) parts.push(`${m}мин`);
+  if (s > 0 || parts.length === 0) parts.push(`${s}сек`);
+  return parts.join(' ');
+}
+
+export function DayDetailModal({
+  dateLabel,
+  trainings,
+  onClose,
+  onDelete,
+}: DayDetailModalProps) {
+  const handleDelete = (id: string) => {
+    if (!window.confirm('Удалить эту тренировку?')) return;
+    onDelete(id);
+  };
+
+  return (
+    <div className={styles.overlay} onClick={onClose}>
+      <div className={styles.dialog} onClick={(e) => e.stopPropagation()}>
+        <div className={styles.header}>
+          <h2 className={styles.title}>{dateLabel}</h2>
+          <Button variant="ghost" size="icon" onClick={onClose}>
+            ✕
+          </Button>
+        </div>
+
+        <div className={styles.body}>
+          {trainings.map((training) => (
+            <div key={training.id} className={styles.trainingCard}>
+              <div className={styles.trainingHeader}>
+                <p className={styles.trainingMeta}>
+                  {formatDuration(training.duration)}
+                </p>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => handleDelete(training.id)}
+                >
+                  Удалить
+                </Button>
+              </div>
+
+              {training.exercises.map((exercise) => (
+                <div key={exercise.id} className={styles.exerciseBlock}>
+                  <p className={styles.exerciseName}>
+                    <span>{exercise.name}</span>
+                  </p>
+                  <p className={styles.exerciseStats}>
+                    <span>Lifts: {exercise.sets.reduce((s, set) => s + set.reps, 0)}</span>
+                    <span>Tonnage: {exercise.sets.reduce((s, set) => s + set.reps * set.weight, 0)} kg</span>
+                  </p>
+                  {exercise.sets.length > 0 && (
+                    <div className={styles.setsList}>
+                      {exercise.sets.map((set, i) => (
+                        <span key={set.id} className={styles.setBadge}>
+                          {i + 1}) {set.reps} × {set.weight}kg
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+
+        <div className={styles.footer}>
+          <Button onClick={onClose} style={{ width: '100%' }}>
+            Закрыть
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}

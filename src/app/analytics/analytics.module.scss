@@ -1,0 +1,116 @@
+.page {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.headerScrolled {
+  background-color: var(--light);
+  border-bottom: 1px solid color-mix(in srgb, var(--dark) 10%, transparent);
+}
+
+.headerInner {
+  max-width: 42rem;
+  margin: 0 auto;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.headerTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--dark);
+}
+
+.headerSpacer {
+  width: 4rem;
+}
+
+.content {
+  flex: 1;
+  max-width: 42rem;
+  margin: 0 auto;
+  width: 100%;
+  padding: 1.5rem 1rem;
+}
+
+.content > * + * {
+  margin-top: 1.5rem;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 5rem;
+  text-align: center;
+}
+
+.emptyIcon {
+  width: 3rem;
+  height: 3rem;
+  color: color-mix(in srgb, var(--dark) 30%, transparent);
+  margin-bottom: 1rem;
+}
+
+.emptyTitle {
+  color: color-mix(in srgb, var(--dark) 50%, transparent);
+  font-size: 1.125rem;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.emptyHint {
+  color: color-mix(in srgb, var(--dark) 30%, transparent);
+  font-size: 0.875rem;
+  margin-bottom: 1.5rem;
+}
+
+.exerciseBlock {
+  border: 1px solid color-mix(in srgb, var(--dark) 10%, transparent);
+  padding: 1.25rem;
+}
+
+.exerciseBlock > * + * {
+  margin-top: 1rem;
+}
+
+.exerciseTitle {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.chart {
+  position: relative;
+  height: 12rem;
+}
+
+.legend {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.75rem;
+  color: color-mix(in srgb, var(--dark) 50%, transparent);
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.legendSwatch {
+  width: 0.75rem;
+  height: 0.75rem;
+  border: 1px solid var(--dark);
+  background-color: var(--dark);
+}

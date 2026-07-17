@@ -1,0 +1,51 @@
+:root {
+  --dark: #1E1D27;
+  --light: #F3F7F8;
+  --accent: #F6D506;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--light);
+  color: var(--dark);
+  font-family: system-ui, -apple-system, sans-serif;
+  margin: 0;
+}
+
+button {
+  outline: none;
+  border: none;
+  cursor: pointer;
+  background-color: transparent;
+}
+h1,h2,h3,p {
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 38rem;
+  width: 100%;
+  margin: 0 auto;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  0% { opacity: 0; transform: translateY(16px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.2s ease-out;
+}

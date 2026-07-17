@@ -1,0 +1,25 @@
+.input {
+  display: flex;
+  height: 2.5rem;
+  width: 100%;
+  border: 1px solid color-mix(in srgb, var(--dark) 10%, transparent);
+  background-color: transparent;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  color: var(--dark);
+  transition: all 0.2s ease-out;
+
+  &::placeholder {
+    color: color-mix(in srgb, var(--dark) 30%, transparent);
+  }
+
+  &:focus-visible {
+    border-color: var(--dark);
+    outline: none;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
