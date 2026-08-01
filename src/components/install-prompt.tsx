@@ -51,39 +51,42 @@ export function InstallPrompt() {
 
   if (isStandalone) return null;
 
-  return (
-    <>
-      {showPrompt && (
-        <div className={styles.banner}>
-          <div className={`${styles.card} animate-fade-in`}>
-            <p className={styles.text}>
-              Install Zen Workout on your home screen for quick access
-            </p>
-            <div className={styles.actions}>
-              <Button onClick={handleInstall} size="sm" className={styles.installButton}>
-                Install
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowPrompt(false)}
-              >
-                Later
-              </Button>
-            </div>
+  // Только один баннер за раз: приоритет у beforeinstallprompt
+  if (showPrompt) {
+    return (
+      <div className={styles.banner}>
+        <div className={`${styles.card} animate-fade-in`}>
+          <p className={styles.text}>
+            Install Zen Workout on your home screen for quick access
+          </p>
+          <div className={styles.actions}>
+            <Button onClick={handleInstall} size="sm" className={styles.installButton}>
+              Install
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowPrompt(false)}
+            >
+              Later
+            </Button>
           </div>
         </div>
-      )}
+      </div>
+    );
+  }
 
-      {isIOS && !isStandalone && (
-        <div className={styles.banner}>
-          <div className={`${styles.card} animate-fade-in`}>
-            <p className={styles.text}>
-              To install the app, tap Share and choose Add to Home Screen
-            </p>
-          </div>
+  if (isIOS) {
+    return (
+      <div className={styles.banner}>
+        <div className={`${styles.card} animate-fade-in`}>
+          <p className={styles.text}>
+            To install the app, tap Share and choose Add to Home Screen
+          </p>
         </div>
-      )}
-    </>
-  );
+      </div>
+    );
+  }
+
+  return null;
 }
