@@ -15,7 +15,7 @@ function getDateKey(d: Date): string {
 
 function formatDateLabel(iso: string): string {
   const d = new Date(iso);
-  return d.toLocaleDateString('ru-RU', {
+  return d.toLocaleDateString('en-US', {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
@@ -62,11 +62,11 @@ export default function HistoryPage() {
     <main className={styles.page}>
       <div className={`${styles.header}${scrolled ? ` ${styles.headerScrolled}` : ''}`}>
         <div className={styles.headerInner}>
-          <Button variant="ghost" size="sm" onClick={() => router.push('/')}>
-            ← Назад
+          <Button variant="outline" size="sm" onClick={() => router.push('/')}>
+            Back
           </Button>
           <h1 className={styles.headerTitle}>
-            История
+            History
           </h1>
           <div className={styles.headerSpacer} />
         </div>
@@ -95,13 +95,13 @@ export default function HistoryPage() {
               />
             </svg>
             <p className={styles.emptyTitle}>
-              Пока нет тренировок
+              No workouts yet
             </p>
             <p className={styles.emptyHint}>
-              Завершите тренировку, чтобы она появилась здесь
+              Finish a workout to see it here
             </p>
             <Button onClick={() => router.push('/')} size="sm">
-              На главную
+              Home
             </Button>
           </div>
         )}

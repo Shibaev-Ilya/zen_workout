@@ -85,7 +85,7 @@ export default function TrainingPage() {
             <div className={styles.headerInner}>
               <Timer isRunning={true} startTimeMs={startTime} />
               <span className={styles.tonnage}>
-                Тоннаж: {exercises.reduce(
+                Tonnage: {exercises.reduce(
                   (sum, e) => sum + e.sets.reduce((s, set) => s + set.reps * set.weight, 0),
                   0,
                 )} kg
@@ -96,7 +96,7 @@ export default function TrainingPage() {
         <div className={styles.exerciseList}>
           {exercises.length === 0 ? (
               <div className={styles.emptyState}>
-                Нажмите «+ Добавить упражнение», чтобы начать
+                Tap “+ Add exercise” to get started
               </div>
           ) : (
               exercises.map((exercise) => (
@@ -124,14 +124,14 @@ export default function TrainingPage() {
                   onClick={handleAddExercise}
                   className={styles.addButton}
               >
-                + Добавить упражнение
+                + Add exercise
               </Button>
               <Button
                   onClick={handleFinish}
                   className={styles.addButton}
                   style={{ marginTop: '0.5rem' }}
               >
-                Завершить
+                Finish
               </Button>
           </div>
         </div>

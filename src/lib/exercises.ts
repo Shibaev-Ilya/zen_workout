@@ -1,19 +1,13 @@
 export const PREDEFINED_EXERCISES = [
   'Жим лёжа',
+  'Жим лежа узким хватом',
   'Приседания со штангой',
-  'Становая тяга',
-  'Армейский жим',
-  'Тяга штанги в наклоне',
   'Подтягивания',
-  'Отжимания на брусьях',
-  'Жим гантелей сидя',
-  'Тяга верхнего блока',
-  'Французский жим',
   'Сгибание рук со штангой',
-  'Жим ногами',
-  'Разгибание ног в тренажёре',
-  'Скручивания',
-  'Гиперэкстензия',
+  'Становая тяга',
+  'Тяга штанги в наклоне',
+  'Отжимания на брусьях',
+  'Французский жим',
 ] as const;
 
 export function getAvailableExercises(customExercises: string[]): string[] {
@@ -22,7 +16,7 @@ export function getAvailableExercises(customExercises: string[]): string[] {
   return [...PREDEFINED_EXERCISES, ...custom];
 }
 
-/** Формула Эпли (Epley, 1985): 1RM = вес × (1 + повторения / 30) */
+/** Epley formula (1985): 1RM = weight × (1 + reps / 30) */
 export function calculateEpleyOneRm(weight: number, reps: number): number {
   if (weight <= 0 || reps <= 0) return 0;
   return Math.round(weight * (1 + reps / 30) * 10) / 10;

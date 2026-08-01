@@ -20,18 +20,18 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip)
 
 function formatDateShort(iso: string): string {
   const d = new Date(iso);
-  return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+  return d.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
 }
 
 interface ExerciseStats {
   name: string;
-  entries: { date: string; kpsh: number; tonnage: number }[];
+  entries: { date: string; kpsh: number; tonnage: number; avgWeight: number }[];
 }
 
 function computeStats(history: CompletedTraining[]): ExerciseStats[] {
   const exerciseMap = new Map<
     string,
-    { date: string; completedAt: string; kpsh: number; tonnage: number }[]
+    { date: string; completedAt: string; kpsh: number; tonnage: number; avgWeight: number }[]
   >();
 
   for (const training of history) {
@@ -41,13 +41,15 @@ function computeStats(history: CompletedTraining[]): ExerciseStats[] {
       const kpsh = exercise.sets.reduce((s, set) => s + set.reps, 0);
       const tonnage = exercise.sets.reduce((s, set) => s + set.reps * set.weight, 0);
       if (kpsh === 0) continue;
+      // СВШ — средний вес штанги (тоннаж / КПШ)
+      const avgWeight = tonnage / kpsh;
 
       let entries = exerciseMap.get(exercise.name);
       if (!entries) {
         entries = [];
         exerciseMap.set(exercise.name, entries);
       }
-      entries.push({ date: dateKey, completedAt: training.completedAt, kpsh, tonnage });
+      entries.push({ date: dateKey, completedAt: training.completedAt, kpsh, tonnage, avgWeight });
     }
   }
 
@@ -60,10 +62,11 @@ function computeStats(history: CompletedTraining[]): ExerciseStats[] {
       return {
         name,
         lastCompletedAt,
-        entries: entries.slice(-10).map(({ date, kpsh, tonnage }) => ({
+        entries: entries.slice(-10).map(({ date, kpsh, tonnage, avgWeight }) => ({
           date,
           kpsh,
           tonnage,
+          avgWeight,
         })),
       };
     })
@@ -71,9 +74,15 @@ function computeStats(history: CompletedTraining[]): ExerciseStats[] {
     .map(({ name, entries }) => ({ name, entries }));
 }
 
+/** ОИ = (СВШ / 1RM) × 100 */
+function relativeIntensity(avgWeight: number, oneRm: number): number {
+  return Math.round((avgWeight / oneRm) * 1000) / 10;
+}
+
 export default function AnalyticsPage() {
   const router = useRouter();
   const history = useTrainingStore((s) => s.history);
+  const oneRmList = useTrainingStore((s) => s.oneRm);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -85,14 +94,22 @@ export default function AnalyticsPage() {
 
   const stats = useMemo(() => computeStats(history), [history]);
 
+  const oneRmByName = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const entry of oneRmList) {
+      if (entry.oneRm > 0) map.set(entry.exerciseName, entry.oneRm);
+    }
+    return map;
+  }, [oneRmList]);
+
   return (
     <main className={styles.page}>
       <div className={`${styles.header}${scrolled ? ` ${styles.headerScrolled}` : ''}`}>
         <div className={styles.headerInner}>
-          <Button variant="ghost" size="sm" onClick={() => router.push('/')}>
-            ← Назад
+          <Button variant="outline" size="sm" onClick={() => router.push('/')}>
+            Back
           </Button>
-          <h1 className={styles.headerTitle}>Аналитика</h1>
+          <h1 className={styles.headerTitle}>Analytics</h1>
           <div className={styles.headerSpacer} />
         </div>
       </div>
@@ -103,39 +120,31 @@ export default function AnalyticsPage() {
             <svg className={styles.emptyIcon} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
             </svg>
-            <p className={styles.emptyTitle}>Нет данных</p>
-            <p className={styles.emptyHint}>Завершите тренировки, чтобы увидеть аналитику</p>
-            <Button onClick={() => router.push('/')} size="sm">На главную</Button>
+            <p className={styles.emptyTitle}>No data</p>
+            <p className={styles.emptyHint}>Finish workouts to see analytics</p>
+            <Button onClick={() => router.push('/')} size="sm">Home</Button>
           </div>
         ) : (
           stats.map((exercise) => {
-            const chartData = {
-              labels: exercise.entries.map((e) => e.date),
+            const labels = exercise.entries.map((e) => e.date);
+            const oneRm = oneRmByName.get(exercise.name);
+
+            const makeChartData = (label: string, data: number[], opacity: number) => ({
+              labels,
               datasets: [
                 {
-                  label: 'КПШ',
-                  data: exercise.entries.map((e) => e.kpsh),
-                  borderColor: 'rgba(0, 0, 0, 0.8)',
-                  backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                  pointBackgroundColor: 'rgba(0, 0, 0, 0.8)',
-                  pointBorderColor: '#fff',
-                  pointBorderWidth: 1,
-                  pointRadius: 3,
-                  tension: 0.1,
-                },
-                {
-                  label: 'Тоннаж',
-                  data: exercise.entries.map((e) => e.tonnage),
-                  borderColor: 'rgba(0, 0, 0, 0.35)',
-                  backgroundColor: 'rgba(0, 0, 0, 0.35)',
-                  pointBackgroundColor: 'rgba(0, 0, 0, 0.35)',
+                  label,
+                  data,
+                  borderColor: `rgba(0, 0, 0, ${opacity})`,
+                  backgroundColor: `rgba(0, 0, 0, ${opacity})`,
+                  pointBackgroundColor: `rgba(0, 0, 0, ${opacity})`,
                   pointBorderColor: '#fff',
                   pointBorderWidth: 1,
                   pointRadius: 3,
                   tension: 0.1,
                 },
               ],
-            };
+            });
 
             const chartOptions = {
               responsive: true,
@@ -163,22 +172,79 @@ export default function AnalyticsPage() {
               },
             };
 
+            const riChartOptions = {
+              ...chartOptions,
+              plugins: {
+                ...chartOptions.plugins,
+                tooltip: {
+                  ...chartOptions.plugins.tooltip,
+                  callbacks: {
+                    label: (ctx: { parsed: { y: number | null }; dataset: { label?: string } }) => {
+                      const y = ctx.parsed.y;
+                      if (y == null) return '';
+                      return `${ctx.dataset.label ?? ''}: ${y}%`;
+                    },
+                  },
+                },
+              },
+              scales: {
+                ...chartOptions.scales,
+                y: {
+                  ...chartOptions.scales.y,
+                  ticks: {
+                    ...chartOptions.scales.y.ticks,
+                    callback: (value: string | number) => `${value}%`,
+                  },
+                },
+              },
+            };
+
             return (
               <div key={exercise.name} className={styles.exerciseBlock}>
                 <p className={styles.exerciseTitle}>{exercise.name}</p>
-                <div className={styles.chart}>
-                  <Line data={chartData} options={chartOptions} />
+                <div className={styles.chartSection}>
+                  <p className={styles.chartLabel}>Lifts</p>
+                  <div className={styles.chart}>
+                    <Line
+                      data={makeChartData(
+                        'Lifts',
+                        exercise.entries.map((e) => e.kpsh),
+                        0.8,
+                      )}
+                      options={chartOptions}
+                    />
+                  </div>
                 </div>
-                <div className={styles.legend}>
-                  <span className={styles.legendItem}>
-                    <span className={styles.legendSwatch} style={{ opacity: 0.8 }} />
-                    КПШ
-                  </span>
-                  <span className={styles.legendItem}>
-                    <span className={styles.legendSwatch} style={{ opacity: 0.35 }} />
-                    Тоннаж
-                  </span>
+                <div className={styles.chartSection}>
+                  <p className={styles.chartLabel}>Tonnage</p>
+                  <div className={styles.chart}>
+                    <Line
+                      data={makeChartData(
+                        'Tonnage',
+                        exercise.entries.map((e) => e.tonnage),
+                        0.35,
+                      )}
+                      options={chartOptions}
+                    />
+                  </div>
                 </div>
+                {oneRm != null && (
+                  <div className={styles.chartSection}>
+                    <p className={styles.chartLabel}>Relative Intensity</p>
+                    <div className={styles.chart}>
+                      <Line
+                        data={makeChartData(
+                          'Relative Intensity',
+                          exercise.entries.map((e) =>
+                            relativeIntensity(e.avgWeight, oneRm),
+                          ),
+                          0.55,
+                        )}
+                        options={riChartOptions}
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
             );
           })

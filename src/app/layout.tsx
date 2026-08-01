@@ -1,14 +1,24 @@
 import type { Metadata, Viewport } from 'next'
+import { InstallPrompt } from '@/components/install-prompt'
 import './globals.scss'
 
 export const metadata: Metadata = {
-  title: 'SportTracker — учёт тренировок',
-  description: 'Приложение для учёта тренировок с таймером и историей',
+  title: 'Zen Workout — workout tracker',
+  description: 'Workout tracking app',
   manifest: '/sporttracker/manifest.webmanifest',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'SportTracker',
+    title: 'Zen Workout',
+  },
+  icons: {
+    icon: [
+      { url: '/sporttracker/icon-192x192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/sporttracker/icon-512x512.png', sizes: '512x512', type: 'image/png' },
+      { url: '/sporttracker/icon.png', type: 'image/png' },
+    ],
+    // iOS игнорирует manifest icons; нужен apple-touch-icon 180×180 без прозрачности
+    apple: [{ url: '/sporttracker/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
   },
 }
 
@@ -16,7 +26,7 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
-  themeColor: '#6366f1',
+  themeColor: '#F3F7F8',
 }
 
 export default function RootLayout({
@@ -25,12 +35,10 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="ru">
-      <head>
-        <link rel="apple-touch-icon" href="/sporttracker/icon-192x192.png" />
-      </head>
+    <html lang="en">
       <body className="min-h-dvh flex flex-col">
         {children}
+        <InstallPrompt />
       </body>
     </html>
   )

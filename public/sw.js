@@ -1,11 +1,13 @@
-const CACHE_NAME = 'sporttracker-v2';
+const CACHE_NAME = 'sporttracker-v4';
 const BASE = '/sporttracker';
 
 const STATIC_ASSETS = [
   `${BASE}/`,
   `${BASE}/manifest.webmanifest`,
+  `${BASE}/icon.png`,
   `${BASE}/icon-192x192.png`,
   `${BASE}/icon-512x512.png`,
+  `${BASE}/apple-touch-icon.png`,
 ];
 
 self.addEventListener('install', (event) => {

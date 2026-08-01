@@ -77,7 +77,7 @@ export default function RepetitionMaximumPage() {
 
     const name = exerciseName.trim();
     if (!name) {
-      setError('Выберите упражнение');
+      setError('Select an exercise');
       return;
     }
 
@@ -85,13 +85,13 @@ export default function RepetitionMaximumPage() {
     if (mode === 'direct') {
       value = Number(directOneRm);
       if (!value || value <= 0) {
-        setError('Укажите корректный 1RM');
+        setError('Enter a valid 1RM');
         return;
       }
     } else {
       value = calculated;
       if (!value || value <= 0) {
-        setError('Укажите вес и повторения для расчёта');
+        setError('Enter weight and reps to calculate');
         return;
       }
     }
@@ -102,19 +102,19 @@ export default function RepetitionMaximumPage() {
       await saveOneRm(name, value);
       resetForm();
     } catch {
-      setError('Не удалось сохранить');
+      setError('Could not save');
     }
     setSaving(false);
   };
 
   const handleDelete = async (id: string) => {
-    if (!window.confirm('Удалить запись 1RM?')) return;
+    if (!window.confirm('Delete this 1RM entry?')) return;
     await deleteOneRm(id);
     if (editing?.id === id) resetForm();
   };
 
   const sortedOneRm = useMemo(
-    () => [...oneRm].sort((a, b) => a.exerciseName.localeCompare(b.exerciseName, 'ru')),
+    () => [...oneRm].sort((a, b) => a.exerciseName.localeCompare(b.exerciseName, 'en')),
     [oneRm],
   );
 
@@ -122,8 +122,8 @@ export default function RepetitionMaximumPage() {
     <main className={styles.page}>
       <div className={`${styles.header}${scrolled ? ` ${styles.headerScrolled}` : ''}`}>
         <div className={styles.headerInner}>
-          <Button variant="ghost" size="sm" onClick={() => router.push('/')}>
-            ← Назад
+          <Button variant="outline" size="sm" onClick={() => router.push('/')}>
+            Back
           </Button>
           <h1 className={styles.headerTitle}>1RM</h1>
           <div className={styles.headerSpacer} />
@@ -133,12 +133,12 @@ export default function RepetitionMaximumPage() {
       <div className={styles.content}>
         <form className={styles.form} onSubmit={handleSubmit}>
           <p className={styles.formTitle}>
-            {editing ? 'Редактировать 1RM' : 'Добавить 1RM'}
+            {editing ? 'Edit 1RM' : 'Add 1RM'}
           </p>
 
           <div className={styles.field}>
             <label className={styles.label} htmlFor="exercise">
-              Упражнение
+              Exercise
             </label>
             <select
               id="exercise"
@@ -147,7 +147,7 @@ export default function RepetitionMaximumPage() {
               onChange={(e) => setExerciseName(e.target.value)}
               disabled={!!editing}
             >
-              <option value="">Выберите упражнение</option>
+              <option value="">Select an exercise</option>
               {availableExercises.map((name) => (
                 <option key={name} value={name}>
                   {name}
@@ -162,14 +162,14 @@ export default function RepetitionMaximumPage() {
               className={`${styles.modeButton}${mode === 'direct' ? ` ${styles.modeButtonActive}` : ''}`}
               onClick={() => setMode('direct')}
             >
-              Указать 1RM
+              Enter 1RM
             </button>
             <button
               type="button"
               className={`${styles.modeButton}${mode === 'epley' ? ` ${styles.modeButtonActive}` : ''}`}
               onClick={() => setMode('epley')}
             >
-              Рассчитать (Эпли)
+              Calculate (Epley)
             </button>
           </div>
 
@@ -193,35 +193,42 @@ export default function RepetitionMaximumPage() {
               <div className={styles.row}>
                 <div className={styles.field}>
                   <label className={styles.label} htmlFor="weight">
-                    Вес, kg
+                    Weight, kg
                   </label>
                   <Input
                     id="weight"
-                    type="number"
-                    min={0}
-                    step={0.5}
+                    type="text"
+                    inputMode="decimal"
+                    enterKeyHint="next"
                     value={weight}
-                    onChange={(e) => setWeight(e.target.value)}
+                    onChange={(e) => {
+                      const raw = e.target.value.replace(',', '.').replace(/[^\d.]/g, '');
+                      setWeight(raw);
+                    }}
                     placeholder="80"
                   />
                 </div>
                 <div className={styles.field}>
                   <label className={styles.label} htmlFor="reps">
-                    Повторения
+                    Reps
                   </label>
                   <Input
                     id="reps"
-                    type="number"
-                    min={1}
-                    step={1}
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    enterKeyHint="done"
                     value={reps}
-                    onChange={(e) => setReps(e.target.value)}
+                    onChange={(e) => {
+                      const raw = e.target.value.replace(/\D/g, '');
+                      setReps(raw);
+                    }}
                     placeholder="5"
                   />
                 </div>
               </div>
               <p className={styles.preview}>
-                1RM = вес × (1 + повторения / 30)
+                1RM = weight × (1 + reps / 30)
                 {calculated > 0 && (
                   <>
                     {' → '}
@@ -239,19 +246,19 @@ export default function RepetitionMaximumPage() {
           <div className={styles.formActions}>
             {editing && (
               <Button type="button" variant="outline" onClick={resetForm}>
-                Отмена
+                Cancel
               </Button>
             )}
             <Button type="submit" disabled={saving} style={{ flex: 1 }}>
-              {saving ? 'Сохранение...' : editing ? 'Сохранить' : 'Добавить'}
+              {saving ? 'Saving...' : editing ? 'Save' : 'Add'}
             </Button>
           </div>
         </form>
 
         <div>
-          <p className={styles.listTitle}>Сохранённые 1RM</p>
+          <p className={styles.listTitle}>Saved 1RM</p>
           {sortedOneRm.length === 0 ? (
-            <p className={styles.emptyHint}>Пока нет записей</p>
+            <p className={styles.emptyHint}>No entries yet</p>
           ) : (
             <div className={styles.list}>
               {sortedOneRm.map((entry) => (
@@ -269,7 +276,7 @@ export default function RepetitionMaximumPage() {
                       type="button"
                       onClick={() => startEdit(entry)}
                     >
-                      Изменить
+                      Edit
                     </Button>
                     <Button
                       variant="destructive"
@@ -277,7 +284,7 @@ export default function RepetitionMaximumPage() {
                       type="button"
                       onClick={() => handleDelete(entry.id)}
                     >
-                      Удалить
+                      Delete
                     </Button>
                   </div>
                 </div>

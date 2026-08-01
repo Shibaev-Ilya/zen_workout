@@ -90,27 +90,17 @@
   font-weight: 600;
 }
 
-.chart {
-  position: relative;
-  height: 12rem;
+.chartSection > * + * {
+  margin-top: 0.5rem;
 }
 
-.legend {
-  display: flex;
-  gap: 1rem;
+.chartLabel {
   font-size: 0.75rem;
+  font-weight: 500;
   color: color-mix(in srgb, var(--dark) 50%, transparent);
 }
 
-.legendItem {
-  display: flex;
-  align-items: center;
-  gap: 0.375rem;
-}
-
-.legendSwatch {
-  width: 0.75rem;
-  height: 0.75rem;
-  border: 1px solid var(--dark);
-  background-color: var(--dark);
+.chart {
+  position: relative;
+  height: 10rem;
 }

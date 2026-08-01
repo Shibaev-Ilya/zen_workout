@@ -10,7 +10,7 @@ interface TrainingCalendarProps {
   onSelectDate: (dateKey: string | null) => void;
 }
 
-const WEEKDAYS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 function getDateKey(d: Date): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -69,7 +69,7 @@ export function TrainingCalendar({ history, selectedDate, onSelectDate }: Traini
     }
   };
 
-  const monthLabel = new Date(year, month).toLocaleDateString('ru-RU', {
+  const monthLabel = new Date(year, month).toLocaleDateString('en-US', {
     month: 'long',
     year: 'numeric',
   });

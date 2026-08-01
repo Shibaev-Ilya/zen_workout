@@ -90,6 +90,42 @@
   border-top: 1px solid color-mix(in srgb, var(--dark) 10%, transparent);
 }
 
+.confirmOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: color-mix(in srgb, var(--dark) 40%, transparent);
+  animation: fadeIn 0.15s ease-out;
+}
+
+.confirmDialog {
+  background-color: var(--light);
+  border: 1px solid color-mix(in srgb, var(--dark) 10%, transparent);
+  width: calc(100% - 2rem);
+  max-width: 20rem;
+  padding: 1.25rem;
+  animation: slideUp 0.15s ease-out;
+}
+
+.confirmText {
+  font-size: 1rem;
+  font-weight: 500;
+  text-align: center;
+  margin-bottom: 1.25rem;
+}
+
+.confirmActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.confirmButton {
+  flex: 1;
+}
+
 @keyframes fadeIn {
   0% { opacity: 0; }
   100% { opacity: 1; }

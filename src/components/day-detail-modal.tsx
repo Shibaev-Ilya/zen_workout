@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import type { CompletedTraining } from '@/lib/types';
 import styles from './day-detail-modal.module.scss';
@@ -16,9 +17,9 @@ function formatDuration(seconds: number): string {
   const m = Math.floor((seconds % 3600) / 60);
   const s = seconds % 60;
   const parts: string[] = [];
-  if (h > 0) parts.push(`${h}ч`);
-  if (m > 0) parts.push(`${m}мин`);
-  if (s > 0 || parts.length === 0) parts.push(`${s}сек`);
+  if (h > 0) parts.push(`${h}h`);
+  if (m > 0) parts.push(`${m}m`);
+  if (s > 0 || parts.length === 0) parts.push(`${s}s`);
   return parts.join(' ');
 }
 
@@ -28,9 +29,12 @@ export function DayDetailModal({
   onClose,
   onDelete,
 }: DayDetailModalProps) {
-  const handleDelete = (id: string) => {
-    if (!window.confirm('Удалить эту тренировку?')) return;
-    onDelete(id);
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+
+  const handleConfirmDelete = () => {
+    if (!pendingDeleteId) return;
+    onDelete(pendingDeleteId);
+    setPendingDeleteId(null);
   };
 
   return (
@@ -53,9 +57,9 @@ export function DayDetailModal({
                 <Button
                   variant="destructive"
                   size="sm"
-                  onClick={() => handleDelete(training.id)}
+                  onClick={() => setPendingDeleteId(training.id)}
                 >
-                  Удалить
+                  Delete
                 </Button>
               </div>
 
@@ -85,10 +89,43 @@ export function DayDetailModal({
 
         <div className={styles.footer}>
           <Button onClick={onClose} style={{ width: '100%' }}>
-            Закрыть
+            Close
           </Button>
         </div>
       </div>
+
+      {pendingDeleteId && (
+        <div
+          className={styles.confirmOverlay}
+          onClick={(e) => {
+            e.stopPropagation();
+            setPendingDeleteId(null);
+          }}
+        >
+          <div
+            className={styles.confirmDialog}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <p className={styles.confirmText}>Delete this workout?</p>
+            <div className={styles.confirmActions}>
+              <Button
+                variant="outline"
+                className={styles.confirmButton}
+                onClick={() => setPendingDeleteId(null)}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                className={styles.confirmButton}
+                onClick={handleConfirmDelete}
+              >
+                Delete
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

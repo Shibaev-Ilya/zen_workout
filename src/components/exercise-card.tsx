@@ -47,6 +47,7 @@ export function ExerciseCard({
                 <th className={styles.thNarrow}></th>
                 <th className={styles.th}>kg</th>
                 <th className={styles.th}>Reps</th>
+                <th className={styles.th}>%</th>
                 <th className={styles.thNarrow}></th>
               </tr>
             </thead>
@@ -57,7 +58,7 @@ export function ExerciseCard({
                   set={set}
                   index={index}
                   exerciseId={exercise.id}
-                  autoFocus={index === exercise.sets.length - 1}
+                  oneRm={oneRm}
                   onUpdate={onUpdateSet}
                   onRemove={onRemoveSet}
                 />
@@ -66,12 +67,12 @@ export function ExerciseCard({
           </table>
           <div className={styles.tableFoot}>
             {oneRm != null && oneRm > 0 && (
-              <span className={styles.oneRmBadge}>1ПМ: {formatOneRm(oneRm)} kg · </span>
+              <span className={styles.oneRmBadge}>1RM: {formatOneRm(oneRm)} kg · </span>
             )}
-            КПШ: {exercise.sets.reduce(
+            Lifts: {exercise.sets.reduce(
               (sum, s) => sum + s.reps,
               0,
-          )} · Тоннаж: {exercise.sets.reduce(
+          )} · Tonnage: {exercise.sets.reduce(
               (sum, s) => sum + s.reps * s.weight,
               0,
           )} kg</div>
@@ -83,7 +84,7 @@ export function ExerciseCard({
         onClick={onAddSet}
         type="button"
       >
-        + Добавить подход
+        + Add set
       </button>
     </div>
   );

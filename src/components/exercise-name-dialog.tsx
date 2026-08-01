@@ -76,7 +76,7 @@ export function ExerciseNameDialog({ onConfirm, onClose, customExercises }: Exer
     <div className={styles.overlay} onClick={onClose}>
       <div className={styles.dialog} onClick={(e) => e.stopPropagation()} onKeyDown={handleKeyDown}>
         <div className={styles.header}>
-          <h2 className={styles.title}>Новое упражнение</h2>
+          <h2 className={styles.title}>New exercise</h2>
           <Button variant="ghost" size="icon" onClick={onClose}>
             ✕
           </Button>
@@ -91,7 +91,7 @@ export function ExerciseNameDialog({ onConfirm, onClose, customExercises }: Exer
               setName(e.target.value);
               setActiveIndex(-1);
             }}
-            placeholder="Введите название или выберите из списка"
+            placeholder="Enter a name or pick from the list"
           />
 
           <ul className={styles.list} ref={listRef}>
@@ -114,14 +114,14 @@ export function ExerciseNameDialog({ onConfirm, onClose, customExercises }: Exer
             className={styles.footerButton}
             onClick={onClose}
           >
-            Отмена
+            Cancel
           </Button>
           <Button
             className={styles.footerButton}
             onClick={handleSubmit}
             disabled={!name.trim()}
           >
-            Добавить
+            Add
           </Button>
         </div>
       </div>

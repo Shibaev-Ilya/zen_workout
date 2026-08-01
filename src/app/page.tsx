@@ -1,24 +1,27 @@
 'use client';
 
 import { useEffect, useState, FormEvent } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useTrainingStore } from '@/lib/store';
 import styles from './page.module.scss';
 
-function mapAuthError(message: string): string {
-  const map: Record<string, string> = {
-    'Login already taken': 'Этот логин уже занят',
-    'Invalid login or password': 'Неверный логин или пароль',
-    'Login must be 3–64 chars: letters, digits, _ or -':
-      'Логин: 3–64 символа (латиница, цифры, _ или -)',
-    'Password must be at least 6 characters':
-      'Пароль не меньше 6 символов',
-    'Missing required fields: login, password': 'Введите логин и пароль',
-    'Network error': 'Не удалось подключиться к серверу',
-  };
-  return map[message] ?? message;
+function BrandTitle() {
+  return (
+    <div className={styles.brand}>
+      <Image
+        src="icon.webp"
+        alt=""
+        width={72}
+        height={72}
+        className={styles.logo}
+        priority
+      />
+      <h1 className={styles.title}>Zen Workout</h1>
+    </div>
+  );
 }
 
 function AuthScreen() {
@@ -45,7 +48,7 @@ function AuthScreen() {
     setError('');
 
     if (password !== passwordRepeat) {
-      setError('Пароли не совпадают');
+      setError('Passwords do not match');
       return;
     }
 
@@ -53,7 +56,7 @@ function AuthScreen() {
     try {
       await register(loginValue.trim(), password);
     } catch (err) {
-      setError(mapAuthError(err instanceof Error ? err.message : 'Ошибка'));
+      setError(err instanceof Error ? err.message : 'Error');
     }
     setLoading(false);
   };
@@ -65,7 +68,7 @@ function AuthScreen() {
     try {
       await loginUser(loginValue.trim(), password);
     } catch (err) {
-      setError(mapAuthError(err instanceof Error ? err.message : 'Ошибка'));
+      setError(err instanceof Error ? err.message : 'Error');
     }
     setLoading(false);
   };
@@ -73,18 +76,18 @@ function AuthScreen() {
   if (!mode) {
     return (
       <div className={styles.authScreen}>
-        <h1 className={styles.title}>Zen Workout</h1>
-        <p className={styles.subtitle}>Дневник тренировок</p>
+        <BrandTitle />
+        <p className={styles.subtitle}>Workout journal</p>
         <div className={styles.authButtons}>
           <Button size="lg" onClick={() => setMode('register')}>
-            Регистрация
+            Sign up
           </Button>
           <Button size="lg" variant="outline" onClick={() => setMode('login')}>
-            Вход
+            Log in
           </Button>
           {isDev && (
             <Button size="lg" variant="ghost" onClick={enterGuestMode}>
-              Продолжить локально
+              Continue locally
             </Button>
           )}
         </div>
@@ -95,13 +98,13 @@ function AuthScreen() {
   if (mode === 'register') {
     return (
       <form className={styles.authScreen} onSubmit={handleRegister}>
-        <h1 className={styles.title}>Регистрация</h1>
-        <p className={styles.subtitle}>Создайте аккаунт для синхронизации</p>
+        <h1 className={styles.title}>Sign up</h1>
+        <p className={styles.subtitle}>Create an account to sync your data</p>
         <div className={styles.authForm}>
           <Input
             value={loginValue}
             onChange={(e) => setLoginValue(e.target.value)}
-            placeholder="Логин"
+            placeholder="Login"
             autoComplete="username"
             autoCapitalize="off"
             spellCheck={false}
@@ -111,7 +114,7 @@ function AuthScreen() {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Пароль"
+            placeholder="Password"
             autoComplete="new-password"
             required
             minLength={6}
@@ -120,7 +123,7 @@ function AuthScreen() {
             type="password"
             value={passwordRepeat}
             onChange={(e) => setPasswordRepeat(e.target.value)}
-            placeholder="Повтор пароля"
+            placeholder="Confirm password"
             autoComplete="new-password"
             required
             minLength={6}
@@ -128,7 +131,7 @@ function AuthScreen() {
         </div>
         {error && <p className={styles.error}>{error}</p>}
         <Button size="lg" type="submit" disabled={loading} style={{ width: '100%' }}>
-          {loading ? 'Создание...' : 'Зарегистрироваться'}
+          {loading ? 'Creating...' : 'Sign up'}
         </Button>
         <button
           type="button"
@@ -138,7 +141,7 @@ function AuthScreen() {
             resetForm();
           }}
         >
-          ← Назад
+          ← Back
         </button>
       </form>
     );
@@ -146,13 +149,13 @@ function AuthScreen() {
 
   return (
     <form className={styles.authScreen} onSubmit={handleLogin}>
-      <h1 className={styles.title}>Вход</h1>
-      <p className={styles.subtitle}>Войдите в свой аккаунт</p>
+      <h1 className={styles.title}>Log in</h1>
+      <p className={styles.subtitle}>Sign in to your account</p>
       <div className={styles.authForm}>
         <Input
           value={loginValue}
           onChange={(e) => setLoginValue(e.target.value)}
-          placeholder="Логин"
+          placeholder="Login"
           autoComplete="username"
           autoCapitalize="off"
           spellCheck={false}
@@ -162,7 +165,7 @@ function AuthScreen() {
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder="Пароль"
+          placeholder="Password"
           autoComplete="current-password"
           required
           minLength={6}
@@ -170,7 +173,7 @@ function AuthScreen() {
       </div>
       {error && <p className={styles.error}>{error}</p>}
       <Button size="lg" type="submit" disabled={loading} style={{ width: '100%' }}>
-        {loading ? 'Вход...' : 'Войти'}
+        {loading ? 'Signing in...' : 'Log in'}
       </Button>
       <button
         type="button"
@@ -180,7 +183,7 @@ function AuthScreen() {
           resetForm();
         }}
       >
-        ← Назад
+        Back
       </button>
     </form>
   );
@@ -236,18 +239,16 @@ export default function HomePage() {
   return (
     <main className={styles.page}>
       <div className={`${styles.container} container`}>
-        <h1 className={styles.title}>
-          Zen Workout
-        </h1>
+        <BrandTitle />
 
         {guestMode ? (
-          <p className={styles.userLogin}>Локальный режим</p>
+          <p className={styles.userLogin}>Local mode</p>
         ) : (
           login && <p className={styles.userLogin}>{login}</p>
         )}
 
         {!serverAvailable && (
-          <p className={styles.warning}>Сервер недоступен — данные не синхронизируются</p>
+          <p className={styles.warning}>Server unavailable — data is not syncing</p>
         )}
 
         <Button
@@ -277,7 +278,7 @@ export default function HomePage() {
           Repetition Maximum
         </button>
         <button onClick={logout} className={styles.logoutLink} type="button">
-          Выйти
+          Log out
         </button>
       </div>
     </main>

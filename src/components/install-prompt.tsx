@@ -29,7 +29,9 @@ export function InstallPrompt() {
     window.addEventListener('beforeinstallprompt', handler);
 
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js');
+      navigator.serviceWorker.register('/sporttracker/sw.js', {
+        scope: '/sporttracker/',
+      });
     }
 
     return () => {
@@ -55,18 +57,18 @@ export function InstallPrompt() {
         <div className={styles.banner}>
           <div className={`${styles.card} animate-fade-in`}>
             <p className={styles.text}>
-              Установите SportTracker на ваш экран для быстрого доступа
+              Install Zen Workout on your home screen for quick access
             </p>
             <div className={styles.actions}>
               <Button onClick={handleInstall} size="sm" className={styles.installButton}>
-                Установить
+                Install
               </Button>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowPrompt(false)}
               >
-                Позже
+                Later
               </Button>
             </div>
           </div>
@@ -77,8 +79,7 @@ export function InstallPrompt() {
         <div className={styles.banner}>
           <div className={`${styles.card} animate-fade-in`}>
             <p className={styles.text}>
-              Чтобы установить приложение, нажмите «Поделиться» и выберите
-              «На экран домой»
+              To install the app, tap Share and choose Add to Home Screen
             </p>
           </div>
         </div>
