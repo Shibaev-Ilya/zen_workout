@@ -1,7 +1,7 @@
 :root {
-  --dark: #1E1D27;
-  --light: #F3F7F8;
-  --accent: #F6D506;
+  --dark: #2A2520;
+  --light: #F7F1E5;
+  --accent: #E3B23C;
 }
 
 * {
@@ -48,4 +48,11 @@ h1,h2,h3,p {
 
 .animate-slide-up {
   animation: slideUp 0.2s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in,
+  .animate-slide-up {
+    animation: none;
+  }
 }

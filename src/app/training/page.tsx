@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Timer } from '@/components/timer';
 import { ExerciseCard } from '@/components/exercise-card';
 import { ExerciseNameDialog } from '@/components/exercise-name-dialog';
+import { PageLoader } from '@/components/page-loader';
 import { useTrainingStore } from '@/lib/store';
 import styles from './training.module.scss';
 
@@ -26,6 +27,7 @@ export default function TrainingPage() {
   const [hydrated, setHydrated] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     const unsub = useTrainingStore.persist.onFinishHydration(() => {
@@ -45,16 +47,23 @@ export default function TrainingPage() {
   }, []);
 
   useEffect(() => {
-    if (hydrated && !isActive && !startTime) {
+    if (hydrated && !saving && !isActive && !startTime) {
       router.replace('/');
     }
-  }, [hydrated, isActive, startTime, router]);
+  }, [hydrated, saving, isActive, startTime, router]);
 
   const handleFinish = async () => {
+    if (saving) return;
+    setSaving(true);
     const training = finishTraining();
-    if (training) {
-      saveTrainingToServer(training);
-      router.push('/history');
+    if (!training) {
+      setSaving(false);
+      return;
+    }
+    try {
+      await saveTrainingToServer(training);
+    } finally {
+      router.push('/');
     }
   };
 
@@ -76,20 +85,43 @@ export default function TrainingPage() {
     }, 100);
   };
 
-  if (!hydrated || (!isActive && !startTime)) return null;
+  if (!hydrated) return null;
+
+  if (saving) {
+    return (
+      <main className={styles.page}>
+        <div className={styles.savingScreen}>
+          <PageLoader label="Saving workout…" />
+        </div>
+      </main>
+    );
+  }
+
+  if (!isActive && !startTime) return null;
 
   return (
     <main className={styles.page}>
       <div className='container'>
           <div className={`${styles.header}${scrolled ? ` ${styles.headerScrolled}` : ''}`}>
             <div className={styles.headerInner}>
+              <div className={styles.headerTop}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    router.push('/');
+                  }}
+                >
+                  Menu
+                </Button>
+                <span className={styles.tonnage}>
+                  Tonnage: {exercises.reduce(
+                    (sum, e) => sum + e.sets.reduce((s, set) => s + set.reps * set.weight, 0),
+                    0,
+                  )} kg
+                </span>
+              </div>
               <Timer isRunning={true} startTimeMs={startTime} />
-              <span className={styles.tonnage}>
-                Tonnage: {exercises.reduce(
-                  (sum, e) => sum + e.sets.reduce((s, set) => s + set.reps * set.weight, 0),
-                  0,
-                )} kg
-              </span>
             </div>
           </div>
 
@@ -123,6 +155,7 @@ export default function TrainingPage() {
               <Button
                   onClick={handleAddExercise}
                   className={styles.addButton}
+                  disabled={saving}
               >
                 + Add exercise
               </Button>
@@ -130,6 +163,7 @@ export default function TrainingPage() {
                   onClick={handleFinish}
                   className={styles.addButton}
                   style={{ marginTop: '0.5rem' }}
+                  disabled={saving}
               >
                 Finish
               </Button>

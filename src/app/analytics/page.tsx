@@ -106,7 +106,13 @@ export default function AnalyticsPage() {
     <main className={styles.page}>
       <div className={`${styles.header}${scrolled ? ` ${styles.headerScrolled}` : ''}`}>
         <div className={styles.headerInner}>
-          <Button variant="outline" size="sm" onClick={() => router.push('/')}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              router.push('/');
+            }}
+          >
             Back
           </Button>
           <h1 className={styles.headerTitle}>Analytics</h1>
@@ -122,7 +128,14 @@ export default function AnalyticsPage() {
             </svg>
             <p className={styles.emptyTitle}>No data</p>
             <p className={styles.emptyHint}>Finish workouts to see analytics</p>
-            <Button onClick={() => router.push('/')} size="sm">Home</Button>
+            <Button
+              onClick={() => {
+                router.push('/');
+              }}
+              size="sm"
+            >
+              Home
+            </Button>
           </div>
         ) : (
           stats.map((exercise) => {

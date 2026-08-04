@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from 'next'
+import { ActiveTrainingFab } from '@/components/active-training-fab'
 import { InstallPrompt } from '@/components/install-prompt'
+import { PageTransition } from '@/components/page-transition'
 import './globals.scss'
 
 export const metadata: Metadata = {
@@ -37,7 +39,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="min-h-dvh flex flex-col">
-        {children}
+        <PageTransition>{children}</PageTransition>
+        <ActiveTrainingFab />
         <InstallPrompt />
       </body>
     </html>

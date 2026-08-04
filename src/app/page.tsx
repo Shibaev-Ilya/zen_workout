@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { PageLoader } from '@/components/page-loader';
 import { useTrainingStore } from '@/lib/store';
 import styles from './page.module.scss';
 
@@ -224,7 +225,16 @@ export default function HomePage() {
     router.push('/training');
   };
 
-  if (!hydrated) return null;
+  if (!hydrated) {
+    return (
+      <main className={styles.page}>
+        <div className={`${styles.container} container`}>
+          <BrandTitle />
+          <PageLoader />
+        </div>
+      </main>
+    );
+  }
 
   if (!token && !guestMode) {
     return (
@@ -260,19 +270,25 @@ export default function HomePage() {
         </Button>
 
         <button
-          onClick={() => router.push('/history')}
+          onClick={() => {
+            router.push('/history');
+          }}
           className={styles.historyLink}
         >
           Workout history
         </button>
         <button
-          onClick={() => router.push('/analytics')}
+          onClick={() => {
+            router.push('/analytics');
+          }}
           className={styles.historyLink}
         >
           Analytics
         </button>
         <button
-          onClick={() => router.push('/repetition-maximum')}
+          onClick={() => {
+            router.push('/repetition-maximum');
+          }}
           className={styles.historyLink}
         >
           Repetition Maximum

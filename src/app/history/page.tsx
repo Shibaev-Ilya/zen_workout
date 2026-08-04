@@ -62,7 +62,13 @@ export default function HistoryPage() {
     <main className={styles.page}>
       <div className={`${styles.header}${scrolled ? ` ${styles.headerScrolled}` : ''}`}>
         <div className={styles.headerInner}>
-          <Button variant="outline" size="sm" onClick={() => router.push('/')}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              router.push('/');
+            }}
+          >
             Back
           </Button>
           <h1 className={styles.headerTitle}>
@@ -100,7 +106,12 @@ export default function HistoryPage() {
             <p className={styles.emptyHint}>
               Finish a workout to see it here
             </p>
-            <Button onClick={() => router.push('/')} size="sm">
+            <Button
+              onClick={() => {
+                router.push('/');
+              }}
+              size="sm"
+            >
               Home
             </Button>
           </div>

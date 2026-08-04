@@ -122,7 +122,13 @@ export default function RepetitionMaximumPage() {
     <main className={styles.page}>
       <div className={`${styles.header}${scrolled ? ` ${styles.headerScrolled}` : ''}`}>
         <div className={styles.headerInner}>
-          <Button variant="outline" size="sm" onClick={() => router.push('/')}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              router.push('/');
+            }}
+          >
             Back
           </Button>
           <h1 className={styles.headerTitle}>1RM</h1>
