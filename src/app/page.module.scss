@@ -1,16 +1,24 @@
 .page {
   min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
 }
 
 .container {
   text-align: center;
-  width: 100%;
-  max-width: 75vw;
+  max-width: 520px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 2rem;
   padding-top: 3vh;
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  width: 100%;
+  padding-left: 1rem;
+  padding-right: 1rem;
 }
 
 .brand {
@@ -22,7 +30,7 @@
 }
 
 .logo {
-  width: 50vw;
+  width: 100%;
   height: auto;
   max-width: 500px;
   flex-shrink: 0;
@@ -42,22 +50,19 @@
 }
 
 .startButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
   width: 100%;
+  max-width: 100%;
+  min-width: 1px;
+  flex: none;
+  box-sizing: border-box;
   font-size: 1.125rem;
   font-weight: 600;
   height: 3.5rem;
-}
-
-.historyLink {
-  font-size: 0.875rem;
-  color: var(--dark);
-  text-decoration: underline;
-  text-underline-offset: 4px;
-  transition: color 0.2s ease-out;
-
-  &:hover {
-    color: var(--dark);
-  }
+  max-height: 3.5rem;
 }
 
 .authScreen {
@@ -104,21 +109,170 @@
   cursor: pointer;
 }
 
-.userLogin {
-  font-size: 0.875rem;
-  color: color-mix(in srgb, var(--dark) 55%, transparent);
-  margin: -1rem 0 0;
+.bottomBar {
+  position: fixed;
+  left: 1rem;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 40;
+  display: flex;
+  align-items: stretch;
+  justify-content: space-around;
+  gap: 0.5rem;
+  padding: 0 calc(0 + env(safe-area-inset-bottom, 0px));
+  background-color: var(--light);
+  border: 1px solid var(--dark);
+  max-width: 520px;
+  margin: 0 auto;
 }
 
-.logoutLink {
-  font-size: 0.8rem;
-  color: color-mix(in srgb, var(--dark) 45%, transparent);
-  text-decoration: underline;
-  text-underline-offset: 4px;
+.bottomBarItem {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  padding: 0.5rem;
+  color: var(--dark);
   background: none;
   border: none;
   cursor: pointer;
-  margin-top: 0.5rem;
+  transition: background-color 0.15s ease-out, opacity 0.15s ease-out;
+
+  &:hover {
+    background-color: color-mix(in srgb, var(--dark) 6%, transparent);
+  }
+
+  &:active {
+    opacity: 0.7;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+  }
+}
+
+.bottomBarIcon {
+  width: 1.5rem;
+  height: 1.5rem;
+  display: block;
+}
+
+.profileOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 1rem;
+  padding-bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px));
+  background-color: color-mix(in srgb, var(--dark) 35%, transparent);
+}
+
+.profilePopup {
+  width: 100%;
+  max-width: 22rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1rem;
+  background-color: var(--light);
+  border: 1px solid var(--dark);
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--dark) 20%, transparent);
+}
+
+.profileHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--dark) 15%, transparent);
+}
+
+.profileAvatar {
+  width: 2.75rem;
+  height: 2.75rem;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--dark);
+  color: var(--light);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.profileMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+  text-align: left;
+}
+
+.profileName {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--dark);
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profileMode {
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--dark) 55%, transparent);
+  margin: 0;
+}
+
+.profileLink {
+  font-size: 0.875rem;
+  color: var(--dark);
+  text-align: left;
+  padding: 0.625rem 0.25rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease-out;
+
+  &:hover {
+    background-color: color-mix(in srgb, var(--dark) 6%, transparent);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+}
+
+.profileLogout {
+  font-size: 0.8rem;
+  color: color-mix(in srgb, var(--dark) 45%, transparent);
+  text-align: left;
+  padding: 0.625rem 0.25rem;
+  margin-top: 0.25rem;
+  border: none;
+  border-top: 1px solid color-mix(in srgb, var(--dark) 15%, transparent);
+  background: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease-out;
+
+  &:hover {
+    background-color: color-mix(in srgb, var(--dark) 6%, transparent);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
 }
 
 .warning {

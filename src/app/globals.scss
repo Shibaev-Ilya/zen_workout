@@ -20,6 +20,8 @@ button {
   border: none;
   cursor: pointer;
   background-color: transparent;
+  -webkit-appearance: none;
+  appearance: none;
 }
 h1,h2,h3,p {
   margin: 0;

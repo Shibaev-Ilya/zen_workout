@@ -112,16 +112,10 @@ export default function TrainingPage() {
                     router.push('/');
                   }}
                 >
-                  Menu
+                  ←
                 </Button>
-                <span className={styles.tonnage}>
-                  Tonnage: {exercises.reduce(
-                    (sum, e) => sum + e.sets.reduce((s, set) => s + set.reps * set.weight, 0),
-                    0,
-                  )} kg
-                </span>
+                <Timer isRunning={true} startTimeMs={startTime} />
               </div>
-              <Timer isRunning={true} startTimeMs={startTime} />
             </div>
           </div>
 
@@ -162,11 +156,16 @@ export default function TrainingPage() {
               <Button
                   onClick={handleFinish}
                   className={styles.addButton}
-                  style={{ marginTop: '0.5rem' }}
                   disabled={saving}
               >
                 Finish
               </Button>
+              <div className={styles.tonnage}>
+                  Tonnage: {exercises.reduce(
+                  (sum, e) => sum + e.sets.reduce((s, set) => s + set.reps * set.weight, 0),
+                  0,
+              )} kg
+                </div>
           </div>
         </div>
       </div>

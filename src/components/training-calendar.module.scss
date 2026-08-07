@@ -26,6 +26,7 @@
   background-color: transparent;
   cursor: pointer;
   transition: border-color 0.15s ease-out;
+  color: var(--dark);
 
   &:hover {
     border-color: var(--dark);
